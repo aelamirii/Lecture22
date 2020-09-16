@@ -1,0 +1,110 @@
+[MUSIC] Okay, I'm back in my code editor. And I'm located in the Lecture22 folder, which is inside
+fullstack-course5/examples folder. And here we have, again,
+our Shopping List app. And it actually looks just about the same
+as our Shopping List app that we used in the factory lecture. So we have a couple of input fields, text fields, that we're going to be typing
+in the item name and item quantity. And we'll be able to click the Add Item
+button and that will immediately get displayed in our ordered list that is
+powered here by the ng-repeat directive. However, this time our shopping
+list service is going to be created using a provider. Let's go ahead and take a look. Let's go to app.js,
+scroll our app, we're right here. And we could see here that we have a
+.provider instead of .service or .factory. And the name of our service, again,
+that's not the provider, it's the name of the service that we're going to be using,
+is called ShoppingListService, and the name of the provider function is
+called ShoppingListServiceProvider. So I just tacked on the Provider
+name on there just so it'd be clear, even though the name of this function
+makes absolutely no difference. So let's go ahead and
+scroll down all the way to see what our ShoppingListServiceProvider function
+looks like. And you can see, it's very similar
+to what we had in the slides. And the most important thing here is, is
+that we are basically assigning the this keyword to the local variable called
+provider, then we are attaching the $get property to the instance of our
+ShoppingListServiceProvider, right? That's really a substitute for this .$get. And that is a function that's going to
+create our shoppingListService and then is going to return our ShoppingListService
+to whoever is asking for it. Now, what we've also done here is we
+created a defaults object that has a maxItems of 10. So, when we create our
+ShoppingListService, we simply look up
+the provider.defaults.maxItems to create a shoppingList that is going to
+allow only 10 items inside of it. So let's take a look at our controller. It shouldn't be really anything
+different than we've had before. Our controller, ShoppingListController,
+is going to inject. Notice it is injecting
+the ShoppingListService, not ShoppingListProvider,
+but ShoppingListService, meaning the service name that we gave to
+our service when we declared the provider. because the providers provide services, whereas the factory that
+provides a service. And the rest of it is
+basically about the same. We're injecting that
+ShoppingListService here, and we're getting the items straight from
+the ShoppingListService instance. That's because we
+returned that instance as part of our generation of
+the ShoppingListService. And the rest of the code
+is exactly the same. We add the item, making sure that we
+are not exceeding the number of items, the max number of items. Because if we do, we're going to
+throw an error from inside of the ShoppingListService itself, and we're
+going to catch that error right here, displaying that error message on our list. This errorMessage property that is going
+to get attached to the instance of the controller, because once again
+we're using controller as syntax. Okay, and
+the remove is exactly the same as before. The ShoppingListService itself is, once again, identical to what
+we had in the previous lecture. It just has some special logic to make
+sure that the maxItems are defined, and if they are defined the number of items in
+our items array is less than the maxItems. Otherwise we are not going to push
+a new item onto the items array. Instead we're just going
+to throw an error saying the max number of items has been reached. So since I have my browser
+sync already working, I'm going to go ahead and
+save that and go to our browser. And here I have my Shopping List,
+and I can start saying cookies, 5 bags of cookies, and
+we'll add that item. And we'll say chips again, and
+we'll take 10 bags of that. Okay, great, in fact,
+let's add a couple more 10 bags of chips. As you could see,
+we can add quite a bit here. We could do more cookies again,
+and let's get 10 bags of cookies. And we could keep adding
+this until we hit 10. And if we add one more, since 10 was
+something that we defined in our code, let's go back and
+take a look at our provider. Since the max number of items was 10, that's our ShoppingListService was created
+with the max number of items being 10. Therefore when we see in
+our browser we're up to 10, if we try to add anymore it's
+going to throw an exception. The exception is going to get
+caught inside of the controller. And the controller's going to
+send this error message to be displayed in the browser. Okay, so the one thing we haven't done is
+we haven't really configured it ourselves. We are relying on the default values. Plus, if you leave the shopping list up to
+me, it's going to be a bunch of 10 bags of chips and cookies, and we need to save
+me from this type of shopping list. So, let's go ahead and limit our shopping list to much
+less than 10 items in the list. Let's limit it, like, to 2. So let's go back to our definition
+when we're defining our module, and we'll go ahead and
+define one more function called config. And we'll call our configuration
+function Config, for lack of creativity, which probably doesn't need to be here. So let's go ahead and
+define our Config function. The first thing we need to do
+is define our inject array. And that inject array is going to have our ShoppingListService
+followed by the word Provider. Okay, now that we did that, we can actually define a function
+that is going to be called Config. And what we're passing in here is
+ShoppingListService, the same thing we declared the Provider with, plus
+the word Provider, the string provider. Okay, so once we define that,
+we can now go ahead and get at the provider properties. In this case it's
+ShoppingListServiceProvider.defaults.maxI- tems, and let's limit it to 2. So now, for
+the duration of the entire application, the shopping list is going to be limited
+to the max number of items being 2. And here we could say,
+Save Yaakov from himself. Okay, let's go back to the browser and
+let's go ahead and try to get cookies. Let's get 10 bags of that, and
+here we could add 10 bags of cookies. Let's get another 10 bags of cookies. And if we try to get yet another 10
+bags of cookies it doesn't work, because we only limited our
+ShoppingListService to have only two items in our shopping list,
+to save Yaakov from himself. However that doesn't really work,
+since I can just remove that and say, let's get 100 bags of that, so
+there we go, 110 bags of cookies. So that whole saving thing
+didn't really work at all. So let's summarize. Among the service and
+factory type of functions, the provider one is the most verbose, but
+it's also the most flexible of them all. And that's because you could configure
+a factory not just at the time of use, but also at app bootstrapping before
+the entire application even starts. The way the provider works is, you give it
+the name of the service that you will be using and the provider function,
+the function that is the provider. That function has to have a $get
+property as part of its instance. Whatever the name is, that's what
+gets injected into other components. Not the provider, but the actual name in the string name that
+is given in the .provider function. The .config function,
+which is optional but very often used, is the one that gets called
+before any service, factory or controller instantiated, which means that
+we can't inject any regular components into the .config function,
+like other services or factories. But we can inject the provider of
+the service by simply putting the name of the service and appending
+the string Provider at the end of it. And that is the service that we
+inject into the .config function, that we're able to configure our provider
+such that the factory that produces some service is configured only once,
+at the beginning of our application.

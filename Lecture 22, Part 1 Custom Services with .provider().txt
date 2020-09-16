@@ -1,0 +1,70 @@
+[SOUND]
+The .provider method is the most verbose, and at the same time, the most flexible
+method of creating services in Angular. Not only can you create a factory
+that's dynamically configurable at the time of using the factory,
+with the provider method, you could custom configure the factor just once at the
+bootstrapping of your entire application. And then, use that factory throughout your
+application with your custom settings. In other words, you could configure this
+factory before your application starts. In fact,
+as the angular documentation tells us, the provider method is what actually
+gets executed behind the scenes when we configure our services with either
+.service or .factory methods. Let's go over the steps of
+using the .provider method The first step is to define
+the provider function. You'll notice that this is a special
+function that has a particular property on the actual instance of the function. Here, you see that the var
+provider is equal to this, so therefore provider.$get, the $get,
+the dollar sign get property, is a function that is directly
+attached to the provider instance. That function is a factory function. In other words, it's just like the one that we use
+to provide to the .factory method. In that function, you create your service. In our case, we're creating
+a new service called Service. This $get property that's a function,
+is what makes the provider a provider. AngularJS expects the provider to
+have a $get property whose value is a function that Angular will
+treat as a factory function. But what makes this whole
+setup very special is the fact that you could provide some config
+object inside the service provider, and that usually comes with defaults that you
+can later overwrite in the step where you configure the entire application,
+which we'll see in a minute. So in this case, we're saying
+provider.config, which means the config property, again, is sitting on
+the instance of ServiceProvider. And it's equal to some
+object literal that, for example, can have a prop property in it. Step two is to register the provider
+function with the module. And the way you register the provider
+is very similar to the controller, the factory, and the service. You just say .provider,
+it’s a method on the module instance, and you supply the name of the service
+that the provider will produce, in the service provider function, that
+has a $get as part of it's properties. Now, notice that the name that you're
+supplying in the provider function is the name of the service as it will
+be injected into other services, controllers, and so on. The name of the function, or the service
+provider function, does not matter at all. The third step is to inject
+our service just as usual. And you'll notice, here, that what we're
+injecting is we're injecting whatever the .provider defined name was,
+not the service provider function. Our .provider declared that we're going
+to have a service called service. And therefore, what we're
+injecting is also called service. Well, so far,
+we haven't really configured anything. So that's why we're on
+optional step number 4a. That is registering the config function. Now, Config function is the special
+function that you can invoke on the module instance that is guaranteed
+to run before any services, factories, or
+controllers are even created. Which means that's a step for
+us to be able to tap into configuring these services
+before they're ever created. Now, the reason it's optional is
+because you don't have to configure it, you could just have
+the defaults take affect. However, for some services, that it
+doesn't make any sense to that any type of defaults, so sometimes this is simply
+required by the business logic or particular service that
+needs to be configured. The optional step 4b is to actually
+define the config function. As you can see here,
+in defining the config function, we're injecting ServiceProvider
+into the config function. Now, we cannot inject any regular services
+into the config function simply because it gets executed before any service's
+factories or controllers are even created. Therefore, what we need to do
+is get at the provider function over particular service. And if the provider has been declared with
+a particular string, the thing that we inject into the config function is
+that string plus the string provider. So in this case, our provider has been
+declared with service, therefore what we inject into the config function and
+then use inside of it is service provider. Once again, the name of the actual provider
+function is completely irrelevant. Last but not least, we can then
+use this ServiceProvider instance to get at its properties, like config, and
+the config properties, to go ahead and configure it for
+our particular application. Okay, so now that we went through
+the process, in part two of this lecture, let's get into the code editor and
+see how this works in action.
